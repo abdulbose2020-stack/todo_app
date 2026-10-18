@@ -63,4 +63,33 @@ class ApiService {
       );
     }
   }
+
+  Future<Todo> patchTodoStatus({
+    required int id,
+    required bool completed,
+  }) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/todos/$id'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode({'completed': completed}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update todo status');
+    }
+
+    return Todo.fromJson(jsonDecode(response.body));
+  }
+
+  Future<void> deleteTodo({
+    required int id,
+  }) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/todos/$id'),
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
+    );
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw Exception(response.body);
+    }
+  }
 }
